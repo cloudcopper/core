@@ -96,7 +96,7 @@ func unmarshalComplexSlice(data T8L16, rv reflect.Value, m Map, path []byte) ([]
 
 		_, value, rest, err := data.Read()
 		if err != nil {
-			return data, err
+			return data, errors.WithStack(err)
 		}
 		value = data[0 : 3+len(value)]
 
