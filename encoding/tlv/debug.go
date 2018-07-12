@@ -4,7 +4,7 @@ package tlv
 
 import "fmt"
 
-func printTlv(data T8L16, level uint) {
+func printTlv(data T8L16, level uint) { // nolint:megacheck
 	for len(data) > 0 {
 		t, v, rest, err := data.Read()
 		if err != nil {

@@ -73,7 +73,7 @@ func isByteSlice(rv reflect.Value) bool {
 	t := reflect.TypeOf(byte(0))
 	return isSliceOf(rv, t)
 }
-func isSliceOfInterfaces(rv reflect.Value) bool {
+func isSliceOfInterfaces(rv reflect.Value) bool { // nolint:deadcode,megacheck
 	t := reflect.TypeOf([]interface{}{}).Elem()
 	return isSliceOf(rv, t)
 }

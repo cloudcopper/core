@@ -258,7 +258,7 @@ func unmarshalStruct(data T8L16, rv reflect.Value, m Map, path []byte) ([]byte, 
 	return nil, nil
 }
 
-func unmarshalBasicType(data []byte, rv reflect.Value, path []byte) ([]byte, error) {
+func unmarshalBasicType(data []byte, rv reflect.Value, path []byte) ([]byte, error) { // nolint:gocyclo,unparam
 	s := int(rv.Type().Size())
 	if len(data) < s {
 		// There is not enough data so we shall prepend zeroes
@@ -300,7 +300,7 @@ func unmarshalBasicType(data []byte, rv reflect.Value, path []byte) ([]byte, err
 		return data[4:], nil
 
 	case reflect.Uint64:
-		rv.SetUint(uint64(binary.NetworkByteOrder.Uint64(data)))
+		rv.SetUint(binary.NetworkByteOrder.Uint64(data))
 		return data[8:], nil
 
 	default:
@@ -308,7 +308,7 @@ func unmarshalBasicType(data []byte, rv reflect.Value, path []byte) ([]byte, err
 	}
 }
 
-func unmarshalString(data []byte, rv reflect.Value, path []byte) ([]byte, error) {
+func unmarshalString(data []byte, rv reflect.Value, path []byte) ([]byte, error) { // nolint:unparam
 	switch k := rv.Kind(); k {
 	case reflect.String:
 		rv.SetString(string(data))
@@ -319,7 +319,7 @@ func unmarshalString(data []byte, rv reflect.Value, path []byte) ([]byte, error)
 	}
 }
 
-func unmarshalByteArray(data []byte, rv reflect.Value, path []byte) ([]byte, error) {
+func unmarshalByteArray(data []byte, rv reflect.Value, path []byte) ([]byte, error) { // nolint:unparam
 	switch k := rv.Kind(); k {
 	case reflect.Array:
 		reflect.Copy(rv, reflect.ValueOf(data))
