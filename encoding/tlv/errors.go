@@ -1,7 +1,6 @@
 package tlv
 
 import (
-	"errors"
 	"fmt"
 	"reflect"
 )
@@ -34,20 +33,24 @@ func (e *ReflectValueHasNoFieldError) Error() string {
 	return fmt.Sprintf("reflect value of type %v has no filed %v", e.rv.Type().Name(), e.field)
 }
 
+type Error string
+
+func (e Error) Error() string { return string(e) }
+
 // ErrEmptyStructTag is the error when empty struct tag detected during Map generation.
-var ErrEmptyStructTag = errors.New("empty struct tag")
+const ErrEmptyStructTag = Error("empty struct tag")
 
 // ErrReflectValueIsInvalid is the error when reflect.Value is not valid
-var ErrReflectValueIsInvalid = errors.New("reflect value is invalid")
+const ErrReflectValueIsInvalid = Error("reflect value is invalid")
 
 // ErrReflectValueMustNotBePtr is the error when reflect.Value must no be a pointer
-var ErrReflectValueMustNotBePtr = errors.New("reflect value must not be ptr")
+const ErrReflectValueMustNotBePtr = Error("reflect value must not be ptr")
 
 // ErrReflectValueIsNotSettable is the error when reflect.Value is not settable
-var ErrReflectValueIsNotSettable = errors.New("reflect value is not settable")
+const ErrReflectValueIsNotSettable = Error("reflect value is not settable")
 
 // ErrNoTlvMap is the error when there is no TLV Map for TLV Type
-var ErrNoTlvMap = errors.New("no tlv map")
+const ErrNoTlvMap = Error("no tlv map")
 
 // ErrTlvMapHasNoEntry is the error when the TLV Map has no entry for TLV Type
-var ErrTlvMapHasNoEntry = errors.New("tlv map has no entry")
+const ErrTlvMapHasNoEntry = Error("tlv map has no entry")
