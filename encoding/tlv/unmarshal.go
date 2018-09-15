@@ -35,7 +35,7 @@ func Unmarshal(data T8L16, v interface{}, hint ...Map) ([]byte, error) {
 }
 
 // unmarshal process data to rv according to m until first error.
-// The rv must not be a pointer. It must be dereference already.
+// The rv must not be a pointer. It must be dereferenced already.
 func unmarshal(data T8L16, rv reflect.Value, m Map, path []byte) ([]byte, error) {
 	// Check the preconditions
 	if !rv.IsValid() {
@@ -235,6 +235,15 @@ func unmarshalStruct(data T8L16, rv reflect.Value, m Map, path []byte) ([]byte, 
 				f.Set(reflect.New(r.T.Elem()))
 			}
 			f = f.Elem()
+		}
+		// If the field is slice of struct...
+		if isSlice(f) && f.Type().Elem().Kind() == reflect.Struct {
+			// ... allocate one struct,
+			// and append to slice.
+			// the following unmarshal shall operate on slice item
+			rv := reflect.Indirect(reflect.New(f.Type().Elem()))
+			f.Set(reflect.Append(f, rv))
+			f = f.Index(f.Len() - 1)
 		}
 
 		if l == 0 && umi != nil {
