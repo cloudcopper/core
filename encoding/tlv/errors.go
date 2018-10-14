@@ -33,6 +33,7 @@ func (e *ReflectValueHasNoFieldError) Error() string {
 	return fmt.Sprintf("reflect value of type %v has no filed %v", e.rv.Type().Name(), e.field)
 }
 
+// Error type is a string to allow const errors within this package
 type Error string
 
 func (e Error) Error() string { return string(e) }

@@ -97,9 +97,9 @@ func ExampleUnmarshal_sliceOfStructs() {
 	// value[1] 0xFAFA "tree" "OK" <nil>
 }
 
-// Unmarshal TLV data to null interface.
+// Unmarshal TLV data to empty interface.
 // Such use case requires mandatory hinting on map between TLV types and Go values.
-func ExampleUnmarshal_nullInterface() {
+func ExampleUnmarshal_emptyInterface() {
 	type Struct1 struct { //`tlv:"1"`
 		Value string `tlv:"1.1"`
 	}
@@ -132,8 +132,8 @@ func ExampleUnmarshal_nullInterface() {
 	// value is {this is Struct2}
 }
 
-// Unmarshal TLV data to slice of null interfaces
-func ExampleUnmarshal_sliceOfNullInterface() {
+// Unmarshal TLV data to slice of empty interfaces
+func ExampleUnmarshal_sliceOfEmptyInterface() {
 	type Struct1 struct { //`tlv:"1"`
 		Value string `tlv:"1.1"`
 	}
@@ -192,8 +192,8 @@ func (s *Struct) EmptyTLVType(t byte, _ string) {
 	s.Empty = append(s.Empty, t)
 }
 
-// Unmarshal TLV data to null interface with extra info on unmarshaled data.
-func ExampleUnmarshal_nullInterfaceWithUnmarshaler() {
+// Unmarshal TLV data to empty interface with extra info on unmarshaled data.
+func ExampleUnmarshal_emptyInterfaceWithUnmarshaler() {
 	// The Struct has filed "Type".
 	// When Unmarshal instantiate it, it going to call on it SetTLVType.
 	// So the Struct method can store the value in Type, and later it may be reused
