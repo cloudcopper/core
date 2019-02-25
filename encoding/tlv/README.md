@@ -10,3 +10,5 @@ and Length is 2 octets (uint16) (i.e. R-PHY Control Protocol(RCP)).
 It does not support others formats (i.e. T8L8 as in DOCSIS MULPI) at the moment.
 
 Marshal function is out of scope for this package.
+
+See full doc at https://godoc.org/github.com/cloudcopper/core/encoding/tlv
