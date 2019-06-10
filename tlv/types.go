@@ -10,8 +10,8 @@ type T8L16 = tlv.T8L16
 // Elements is generic TLV structure
 type Elements []Element
 
-// Element is single element of generic TLV structure. I shall have either value (V),
-// or sub-elements (sub).
+// Element is single element of generic TLV structure.
+// It shall have either value (V), or sub-elements (sub).
 type Element struct {
 	T int
 	// Until https://github.com/golang/go/issues/19412 resolved,
