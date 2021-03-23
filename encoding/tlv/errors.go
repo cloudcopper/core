@@ -20,7 +20,7 @@ type UnprocessedDataError struct {
 }
 
 func (e *UnprocessedDataError) Error() string {
-	return fmt.Sprintf("unprocessed data %v", e)
+	return fmt.Sprintf("unprocessed data %v", e.data)
 }
 
 // ReflectValueHasNoFieldError is the error returned when the reflect.Value has no field
