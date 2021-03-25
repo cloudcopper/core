@@ -12,7 +12,8 @@ Example
 
 ```
 func GetGcpAllocateWrite() ([]byte, err) {
-	yaml := `# This is example of R-PHY GCP AllocateWrite message
+    yaml := `# This is example of R-PHY GCP AllocateWrite message
+# WARN no tabs (\t) allowed in yaml!!!
 Sequence(9):
     SequenceNumber(10): [0,1]
     Operation(11): [7]
@@ -25,17 +26,14 @@ Sequence(9):
         - CoreMode(7):      [2]
         - InitialConfigurationComplete(8): false
         - CoreFunction(10): [0,16]
-        # following is just unrealistic values for this test 
-        - 201:              172.30.20.10 # IPv4
-        - 202:              null
 `
-	msg, err := tlv.Decode(yaml)
+    msg, err := tlv.Decode(yaml)
     if err != nil {
         return nil, err
     }
 
-	bin, err := Marshal(msg)
-	return bin, err
+    bin, err := Marshal(msg)
+    return bin, err
 }
 ```
 
