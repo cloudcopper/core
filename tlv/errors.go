@@ -2,8 +2,14 @@ package tlv
 
 import "errors"
 
-var errUnsupportedOutputType = errors.New("unsupported output type")
+var errNoYamlDocumentNode = errors.New("no yaml document node found")
 var errUnsupportedInputType = errors.New("unsupported input type")
-var errUnsupportedKeyType = errors.New("unsupported key type")
+var errUnsupportedKey = errors.New("unsupported key")
 var errUnsupportedValueType = errors.New("unsupported value type")
 var errTlvUnmarshalNotEnoughData = errors.New("not enough data to unmarshal TLV")
+var errCanNotParseSliceOfBytes = errors.New("can not parse slice of bytes")
+var errStringTooShort = errors.New("string too short")
+var errWrongFormat = errors.New("wrong format")
+var errUnsupportedYamlNodeKind = errors.New("unsupported yaml node kind")
+var errYamlMappingNodeWrongContentSize = errors.New("yaml node mapping has wrong content size")
+var errNotAllYamlNodesProcessed = errors.New("not all yaml nodes processed")
