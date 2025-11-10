@@ -75,7 +75,7 @@ func getTlvMap(t reflect.Type) (Map, error) {
 
 	// Validate the requested type. Shall be struct
 	if t.Kind() != reflect.Struct {
-		return nil, &WrongKindError{t.Kind()}
+		return nil, &WrongKindError{t.Kind(), nil}
 	}
 
 	// Create map out of all fields of requested struct type

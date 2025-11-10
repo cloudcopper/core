@@ -2,6 +2,7 @@ package tlv
 
 import (
 	"reflect"
+	"time"
 
 	"github.com/cloudcopper/core/encoding/binary"
 	"github.com/pkg/errors"
@@ -21,7 +22,6 @@ import (
 // Then the structure should implemented interface Unmarshaler.
 //
 // Please see examples.
-//
 func Unmarshal(data T8L16, v interface{}, hint ...Map) ([]byte, error) {
 	rv := reflect.Indirect(reflect.ValueOf(v))
 
@@ -129,6 +129,10 @@ func unmarshalValue(data T8L16, rv reflect.Value, m Map, path []byte) ([]byte, e
 		return unmarshalByteArray(data, rv, path)
 	}
 
+	if isTime(rv) && m == nil {
+		return unmarshalTime(data, rv, path)
+	}
+
 	if isInterface(rv) {
 		return unmarshalInterface(data, rv, m, path)
 	}
@@ -136,7 +140,7 @@ func unmarshalValue(data T8L16, rv reflect.Value, m Map, path []byte) ([]byte, e
 		return unmarshalStruct(data, rv, m, path)
 	}
 
-	return data, &WrongKindError{rv.Kind()}
+	return data, &WrongKindError{rv.Kind(), path}
 }
 
 func unmarshalInterface(data T8L16, rv reflect.Value, m Map, path []byte) ([]byte, error) {
@@ -313,7 +317,7 @@ func unmarshalBasicType(data []byte, rv reflect.Value, path []byte) ([]byte, err
 		return data[8:], nil
 
 	default:
-		return data, &WrongKindError{k}
+		return data, &WrongKindError{k, path}
 	}
 }
 
@@ -324,7 +328,7 @@ func unmarshalString(data []byte, rv reflect.Value, path []byte) ([]byte, error)
 		return nil, nil
 
 	default:
-		return nil, &WrongKindError{k}
+		return nil, &WrongKindError{k, path}
 	}
 }
 
@@ -335,6 +339,59 @@ func unmarshalByteArray(data []byte, rv reflect.Value, path []byte) ([]byte, err
 		return nil, nil
 
 	default:
-		return nil, &WrongKindError{k}
+		return nil, &WrongKindError{k, path}
 	}
+}
+
+func unmarshalTime(data []byte, rv reflect.Value, path []byte) ([]byte, error) {
+	if len(data) < 8 {
+		return data, ErrNotEnoughData
+	}
+
+	year := int(data[0])<<8 | int(data[1])
+	if data[2] < 1 || data[2] > 12 {
+		return data, ErrBadTime
+	}
+	month := time.Month(data[2])
+	day := int(data[3])
+	if day < 1 || day > 31 {
+		return data, ErrBadTime
+	}
+	hour := int(data[4])
+	if hour < 0 || hour > 23 {
+		return data, ErrBadTime
+	}
+	min := int(data[5])
+	if min < 0 || min > 59 {
+		return data, ErrBadTime
+	}
+	sec := int(data[6])
+	if sec < 0 || sec > 59 {
+		return data, ErrBadTime
+	}
+	if data[7] > 9 {
+		return data, ErrBadTime
+	}
+	nsec := int(data[7]) * 100_000_000
+	data = data[8:]
+
+	loc := time.UTC
+	// Optional TZ info
+	if len(data) >= 3 && (data[0] == '-' || data[0] == '+') && (data[1] < 24) && (data[2] < 60) {
+		tzHour := int(data[1])
+		tzMin := int(data[2])
+
+		offset := tzHour*3600 + tzMin*60
+		if data[0] == '-' {
+			offset = -offset
+		}
+
+		loc = time.FixedZone("", offset)
+		data = data[3:]
+	}
+
+	t := time.Date(year, month, day, hour, min, sec, nsec, loc)
+	rv.Set(reflect.ValueOf(t))
+
+	return data, nil
 }

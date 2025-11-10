@@ -8,10 +8,14 @@ import (
 // WrongKindError is the error returned when wrong reflect.Kind being detected.
 type WrongKindError struct {
 	kind reflect.Kind
+	path []byte
 }
 
 func (e *WrongKindError) Error() string {
-	return fmt.Sprintf("wrong kind %v", e.kind)
+	if e.path == nil {
+		return fmt.Sprintf("wrong kind %v", e.kind)
+	}
+	return fmt.Sprintf("wrong kind %v, path %v", e.kind, e.path)
 }
 
 // UnprocessedDataError is the error returned when there is unprocessed data
@@ -55,3 +59,6 @@ const ErrNoTlvMap = Error("no tlv map")
 
 // ErrTlvMapHasNoEntry is the error when the TLV Map has no entry for TLV Type
 const ErrTlvMapHasNoEntry = Error("tlv map has no entry")
+
+const ErrNotEnoughData = Error("not enough data")
+const ErrBadTime = Error("bad time")

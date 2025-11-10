@@ -4,6 +4,7 @@ package tlv
 
 import (
 	"reflect"
+	"time"
 )
 
 func isStruct(rv reflect.Value) bool {
@@ -101,4 +102,8 @@ func isArrayOf(rv reflect.Value, t reflect.Type) bool {
 func isByteArray(rv reflect.Value) bool {
 	t := reflect.TypeOf(byte(0))
 	return isArrayOf(rv, t)
+}
+
+func isTime(rv reflect.Value) bool {
+	return rv.Type() == reflect.TypeOf(time.Time{})
 }
