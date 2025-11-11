@@ -23,11 +23,21 @@ func stringify(data Elements, buf *bytes.Buffer, level int) error {
 		indent += "- "
 	}
 
+	T := func(rec Element) string {
+		var t string
+		if rec.Name != "" {
+			t = fmt.Sprintf("%s(%d)", rec.Name, rec.T)
+		} else {
+			t = fmt.Sprintf("%d", rec.T)
+		}
+		return t
+	}
+
 	for _, rec := range data {
 		switch {
 		case rec.Sub != nil:
 			buf.WriteString(indent)
-			buf.WriteString(fmt.Sprintf("%d:", rec.T))
+			buf.WriteString(fmt.Sprintf("%s: ", T(rec)))
 			buf.WriteString("\n")
 			if err := stringify(rec.Sub, buf, level+1); err != nil {
 				return errors.Wrap(err, "unable to stringify child value")
@@ -35,13 +45,13 @@ func stringify(data Elements, buf *bytes.Buffer, level int) error {
 
 		case len(rec.V) == 0:
 			buf.WriteString(indent)
-			buf.WriteString(fmt.Sprintf("%d: ", rec.T))
+			buf.WriteString(fmt.Sprintf("%s: ", T(rec)))
 			buf.WriteString("null")
 			buf.WriteString("\n")
 
 		case rec.Sub == nil:
 			buf.WriteString(indent)
-			buf.WriteString(fmt.Sprintf("%d: ", rec.T))
+			buf.WriteString(fmt.Sprintf("%s: ", T(rec)))
 			toBuf(rec.V, buf)
 			buf.WriteString("\n")
 

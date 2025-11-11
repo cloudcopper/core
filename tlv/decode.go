@@ -76,21 +76,24 @@ func decodeYamlNodeMapping(nodes []*yaml.Node, index int, out *Elements) (int, e
 		return index, errors.WithStack(errYamlMappingNodeWrongContentSize)
 	}
 
-	// TLV Type
-	if err := decodeYamlAppendElement(n.Content[0], out); err != nil {
-		return index, err
-	}
-	// TLV Value
-	if err := decodeYamlSetElementValue(n.Content[1], out); err != nil {
-		return index, err
+	for i := 0; i < len(n.Content); i += 2 {
+		// TLV Type
+		if err := decodeYamlAppendElement(n.Content[i+0], out); err != nil {
+			return index, err
+		}
+		// TLV Value
+		if err := decodeYamlSetElementValue(n.Content[i+1], out); err != nil {
+			return index, err
+		}
 	}
 
 	return index + 1, nil
 }
 
-var reKey = regexp.MustCompile(`.*\(([0-9]*)\).*`)
+var reKey = regexp.MustCompile(`(.*)\(([0-9]*)\).*`)
 
 func decodeYamlAppendElement(node *yaml.Node, out *Elements) error {
+	name := ""
 	//
 	// TLV Type
 	//
@@ -101,10 +104,11 @@ func decodeYamlAppendElement(node *yaml.Node, out *Elements) error {
 	if err != nil {
 		// try "Text(integer)"
 		m := reKey.FindAllStringSubmatch(s, -1)
-		if len(m) != 1 && len(m[0]) == 2 {
+		if len(m) != 1 || len(m[0]) != 3 {
 			return errors.WithStack(errUnsupportedKey)
 		}
-		s = m[0][1]
+		name = m[0][1]
+		s = m[0][2]
 		if s == "" {
 			return errors.WithStack(errUnsupportedKey)
 		}
@@ -114,7 +118,7 @@ func decodeYamlAppendElement(node *yaml.Node, out *Elements) error {
 		}
 	}
 
-	*out = append(*out, Element{int(t), nil, nil})
+	*out = append(*out, Element{name, int(t), nil, nil})
 	return nil
 }
 

@@ -43,3 +43,4 @@ TODO
 * license
 * consts instead of 1, 2 and 3(which actually 1+2)
 * slice vs bytes.Buffer
+* values stringification

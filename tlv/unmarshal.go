@@ -42,7 +42,8 @@ func UnmarshalT8L16(data T8L16, out *Elements) error {
 			}
 		}
 
-		*out = append(*out, Element{t, v, sub})
+		name := ""
+		*out = append(*out, Element{name, t, v, sub})
 
 		// Shift ...
 		data = data[3+l:]

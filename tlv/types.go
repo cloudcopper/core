@@ -13,7 +13,8 @@ type Elements []Element
 // Element is single element of generic TLV structure.
 // It shall have either value (V), or sub-elements (sub).
 type Element struct {
-	T int
+	Name string // optional type name
+	T    int
 	// Until https://github.com/golang/go/issues/19412 resolved,
 	// we have to use either two field or interface{}
 	V   T8L16
