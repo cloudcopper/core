@@ -20,3 +20,13 @@ type Element struct {
 	V   T8L16
 	Sub Elements
 }
+
+func (e Element) Get(key string) (T8L16, bool) {
+	for _, k := range e.Sub {
+		if k.Name != key {
+			continue
+		}
+		return k.V, true
+	}
+	return nil, false
+}

@@ -93,6 +93,7 @@ func decodeYamlNodeMapping(nodes []*yaml.Node, index int, out *Elements) (int, e
 var reKey = regexp.MustCompile(`(.*)\(([0-9]*)\).*`)
 
 func decodeYamlAppendElement(node *yaml.Node, out *Elements) error {
+	strict := false
 	name := ""
 	//
 	// TLV Type
@@ -104,17 +105,29 @@ func decodeYamlAppendElement(node *yaml.Node, out *Elements) error {
 	if err != nil {
 		// try "Text(integer)"
 		m := reKey.FindAllStringSubmatch(s, -1)
-		if len(m) != 1 || len(m[0]) != 3 {
+		if (len(m) != 1 || len(m[0]) != 3) && strict {
 			return errors.WithStack(errUnsupportedKey)
 		}
-		name = m[0][1]
-		s = m[0][2]
-		if s == "" {
-			return errors.WithStack(errUnsupportedKey)
+		if (len(m) != 1 || len(m[0]) != 3) && !strict {
+			// This is non strict decode
+			// and type name is a string
+			// but not unexpected format
+			// Store the name and set
+			// type value to bigger than allowed
+			// so the encode will be able skip it
+			name = s
+			t = 0x100000
 		}
-		t, err = strconv.ParseUint(s, 0, 64)
-		if err != nil {
-			return errors.WithStack(err)
+		if len(m) == 1 && len(m[0]) == 3 {
+			name = m[0][1]
+			s = m[0][2]
+			if s == "" {
+				return errors.WithStack(errUnsupportedKey)
+			}
+			t, err = strconv.ParseUint(s, 0, 64)
+			if err != nil {
+				return errors.WithStack(err)
+			}
 		}
 	}
 

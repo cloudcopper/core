@@ -12,7 +12,8 @@ var chunkSize = os.Getpagesize()
 
 // Marshal encode generic TLV structure into TLV data
 func Marshal(in Elements) (T8L16, error) {
-	buf := make([]byte, chunkSize, chunkSize)
+	strict := false
+	buf := make([]byte, chunkSize)
 	pos := chunkSize
 	// The resize function increases buf to fit at least r more bytes
 	resize := func(r int) {
@@ -33,6 +34,12 @@ func Marshal(in Elements) (T8L16, error) {
 	f = func(in Elements) error {
 		for i := len(in) - 1; i >= 0; i-- {
 			el := &(in)[i]
+
+			if !strict {
+				if el.T < 0 || el.T > 255 {
+					continue
+				}
+			}
 
 			switch {
 			case el.Sub != nil:
