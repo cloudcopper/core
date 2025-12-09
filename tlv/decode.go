@@ -213,7 +213,31 @@ func decodeYamlValue(node *yaml.Node) (T8L16, error) {
 	// fallback to byte
 	n, err := strconv.ParseUint(s, 0, 8)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		strict := true
+		// try "Text(integer)"
+		m := reKey.FindAllStringSubmatch(s, -1)
+		if (len(m) != 1 || len(m[0]) != 3) && strict {
+			return nil, errors.WithStack(errUnsupportedValue)
+		}
+		if len(m) == 1 && len(m[0]) == 3 {
+			s = m[0][2]
+			if s == "" {
+				return nil, errors.WithStack(errUnsupportedValue)
+			}
+			t, err := strconv.ParseUint(s, 0, 64)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			v := T8L16{0, 0, 0, 0, 0, 0, 0, 0}
+			binary.NetworkByteOrder.PutUint64(v, t)
+			for v[0] == 0 && len(v) > 1 {
+				v = v[1:]
+			}
+			for len(v) != 1 && len(v) != 2 && len(v) != 4 && len(v) != 8 {
+				v = append(v, 0)
+			}
+			return v, nil
+		}
 	}
 
 	return T8L16{byte(n)}, nil
