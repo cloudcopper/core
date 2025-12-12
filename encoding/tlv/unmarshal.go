@@ -160,7 +160,7 @@ func unmarshalInterface(data T8L16, rv reflect.Value, m Map, path []byte) ([]byt
 	if !ok {
 		r, ok = m[AllOthers]
 		if !ok {
-			return data, ErrTlvMapHasNoEntry
+			return data, ErrTlvMapHasNoEntry{Path: append(path, t)}
 		}
 		// In case of allOthers we shall not loose type info,
 		// so prepend tl to v
@@ -218,7 +218,7 @@ func unmarshalStruct(data T8L16, rv reflect.Value, m Map, path []byte) ([]byte, 
 		if !ok {
 			r, ok = m[AllOthers]
 			if !ok {
-				return data, ErrTlvMapHasNoEntry
+				return data, ErrTlvMapHasNoEntry{Path: append(path, t)}
 			}
 			// In case of allOthers we shall not loose type info,
 			// so prepend tl to v

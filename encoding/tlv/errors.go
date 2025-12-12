@@ -58,7 +58,14 @@ const ErrReflectValueIsNotSettable = Error("reflect value is not settable")
 const ErrNoTlvMap = Error("no tlv map")
 
 // ErrTlvMapHasNoEntry is the error when the TLV Map has no entry for TLV Type
-const ErrTlvMapHasNoEntry = Error("tlv map has no entry")
+type ErrTlvMapHasNoEntry struct {
+	Path []byte
+}
+
+func (e ErrTlvMapHasNoEntry) Error() string {
+	return fmt.Sprintf("tlv map has no entry - %v", e.Path)
+
+}
 
 const ErrNotEnoughData = Error("not enough data")
 const ErrBadTime = Error("bad time")
